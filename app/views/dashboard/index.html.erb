@@ -1,0 +1,176 @@
+<!-- app/views/dashboard/index.html.erb -->
+<% if receptionist? %>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Receptionist Dashboard</h2>
+    </div>
+  </div>
+  
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <h5>Total Patients</h5>
+          <h2><%= @patients_count %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <h5>Today's Registrations</h5>
+          <h2><%= @today_registrations %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <h5>Quick Actions</h5>
+          <%= link_to "Register New Patient", new_patient_path, class: "btn btn-light" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Recent Patients</h5>
+        </div>
+        <div class="card-body">
+          <% if @recent_patients.any? %>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Registered</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @recent_patients.each do |patient| %>
+                    <tr>
+                      <td><%= patient.name %></td>
+                      <td><%= patient.email %></td>
+                      <td><%= patient.phone %></td>
+                      <td><%= patient.created_at.strftime('%m/%d/%Y') %></td>
+                      <td>
+                        <%= link_to "View", patient, class: "btn btn-sm btn-outline-primary" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <p>No patients registered yet.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% elsif doctor? %>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Doctor Dashboard</h2>
+    </div>
+  </div>
+  
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <h5>Total Patients</h5>
+          <h2><%= @total_patients %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <h5>Today's Registrations</h5>
+          <h2><%= @today_registrations %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Weekly Patient Registrations</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="weeklyChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Monthly Patient Registrations</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="monthlyChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Weekly Chart
+    const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+    new Chart(weeklyCtx, {
+      type: 'line',
+      data: {
+        labels: <%= @weekly_data.keys.to_json.html_safe %>,
+        datasets: [{
+          label: 'Patients Registered',
+          data: <%= @weekly_data.values.to_json.html_safe %>,
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    
+    // Monthly Chart
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(monthlyCtx, {
+      type: 'bar',
+      data: {
+        labels: <%= @monthly_data.keys.to_json.html_safe %>,
+        datasets: [{
+          label: 'Patients Registered',
+          data: <%= @monthly_data.values.to_json.html_safe %>,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+<% end %>

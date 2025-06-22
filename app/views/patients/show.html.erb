@@ -1,0 +1,94 @@
+<!-- app/views/patients/show.html.erb -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Patient Details</h2>
+  <div>
+    <% if receptionist? %>
+      <%= link_to "Edit", edit_patient_path(@patient), class: "btn btn-primary" %>
+    <% end %>
+    <%= link_to "Back to Patients", patients_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5>Personal Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Name:</strong><br>
+            <%= @patient.name %>
+          </div>
+          <div class="col-md-6">
+            <strong>Email:</strong><br>
+            <%= @patient.email %>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Phone:</strong><br>
+            <%= @patient.phone %>
+          </div>
+          <div class="col-md-6">
+            <strong>Emergency Contact:</strong><br>
+            <%= @patient.emergency_contact %>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Date of Birth:</strong><br>
+            <%= @patient.date_of_birth.strftime('%B %d, %Y') %>
+          </div>
+          <div class="col-md-6">
+            <strong>Age:</strong><br>
+            <%= @patient.age %> years old
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <strong>Gender:</strong><br>
+            <%= @patient.gender %>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <strong>Address:</strong><br>
+            <%= simple_format(@patient.address) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5>Medical Information</h5>
+      </div>
+      <div class="card-body">
+        <strong>Medical History:</strong><br>
+        <%= simple_format(@patient.medical_history.presence || "No medical history recorded.") %>
+      </div>
+    </div>
+    
+    <div class="card mt-3">
+      <div class="card-header">
+        <h5>Registration Info</h5>
+      </div>
+      <div class="card-body">
+        <strong>Registered:</strong><br>
+        <%= @patient.created_at.strftime('%B %d, %Y at %I:%M %p') %>
+        
+        <br><br>
+        <strong>Last Updated:</strong><br>
+        <%= @patient.updated_at.strftime('%B %d, %Y at %I:%M %p') %>
+      </div>
+    </div>
+  </div>
+</div>
